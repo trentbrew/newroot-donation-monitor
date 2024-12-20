@@ -37,7 +37,9 @@ async function monitor() {
       const dom = new JSDOM(html)
 
       // Store the HTML for debugging
-      report.debug.html = html
+      // report.debug.html = html
+      report.debug.html =
+        html.slice(0, 1000) + ' [...] <!-- truncated for brevity -->' // First 1000 characters
 
       // Look for various indicators of the donation form
       const indicators = {
