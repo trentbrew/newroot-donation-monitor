@@ -27,7 +27,7 @@ app.get('/', async (req, res) => {
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: black;
+            background: #181818;
             color: white;
             font-family: system-ui, sans-serif;
           }
