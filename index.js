@@ -42,6 +42,7 @@ app.get('/', async (req, res) => {
           }
           p {
             margin: 0.5rem 0;
+            color: #999;
           }
         </style>
       </head>
