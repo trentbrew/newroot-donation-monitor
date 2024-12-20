@@ -2,6 +2,9 @@ import fetch from 'node-fetch'
 import { JSDOM } from 'jsdom'
 
 const pages = {
+  home: {
+    parent: 'https://newroot.org',
+  },
   donate: {
     parent: 'https://newroot.org/donate',
     form: 'https://fundraise.givesmart.com/form/6dSeGQ?utm_source=embed&utm_medium=page&utm_campaign=donation&vid=1gtmvc',
@@ -15,12 +18,12 @@ const pages = {
 async function monitor(page) {
   const endpoints = {
     parent: pages[page].parent,
-    form: pages[page].form,
+    form: pages[page].form || null,
   }
 
   let report = {
     parentUrl: endpoints.parent,
-    formUrl: endpoints.form,
+    formUrl: endpoints.form || null,
     parentStatus: '',
     iframePresent: false,
     message: '',
