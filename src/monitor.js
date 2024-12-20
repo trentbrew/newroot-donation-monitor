@@ -1,21 +1,10 @@
-const puppeteer = require('puppeteer')
+import chromium from 'chrome-aws-lambda'
+import puppeteer from 'puppeteer-core'
 
 async function monitor() {
   const url =
     'https://fundraise.givesmart.com/form/6dSeGQ?utm_source=embed&utm_medium=page&utm_campaign=donation&vid=1gtmvc'
 
-  // Launch the headless browser
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--no-proxy-server',
-      '--dns-prefetch-disable',
-    ],
-  })
-
-  // Define the report schema
   let report = {
     url,
     status: '',
@@ -23,38 +12,65 @@ async function monitor() {
     message: '',
   }
 
+  let browser
   try {
-    // Create a new page
+    // Determine Chrome path based on environment
+    const executablePath =
+      process.env.CHROME_EXECUTABLE_PATH ||
+      (process.env.VERCEL
+        ? await chromium.executablePath
+        : process.platform === 'win32'
+        ? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
+        : process.platform === 'linux'
+        ? '/usr/bin/google-chrome'
+        : '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome')
+
+    console.log('Using Chrome at:', executablePath) // Debug log
+
+    // Launch browser with appropriate config
+    browser = await puppeteer.launch({
+      args: chromium.args || [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-accelerated-2d-canvas',
+        '--no-first-run',
+        '--no-zygote',
+        '--single-process',
+        '--disable-gpu',
+      ],
+      defaultViewport: chromium.defaultViewport || {
+        width: 1280,
+        height: 720,
+      },
+      executablePath,
+      headless: true,
+      ignoreHTTPSErrors: true,
+    })
+
     const page = await browser.newPage()
 
-    // Set a realistic user agent
-    const userAgents = [
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
-      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.3 Safari/605.1.15',
-      'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36',
-      'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1',
-    ]
+    // Set user agent
+    await page.setUserAgent(
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    )
 
-    // Set a random user agent
-    const randomIndex = Math.floor(Math.random() * userAgents.length)
-    await page.setUserAgent(userAgents[randomIndex])
-
-    // Navigate to the URL
+    // Navigate to page and wait for network to be idle
     const response = await page.goto(url, {
-      waitUntil: 'domcontentloaded',
+      waitUntil: 'networkidle0',
       timeout: 30000,
     })
 
-    // Check HTTP response status
     report.status = response.status()
+
     if (response.status() !== 200) {
       report.message = `Failed to load form. HTTP status: ${response.status()}`
       return report
     }
 
-    // Verify if the form exists
-    const formSelector = 'form'
-    const formExists = await page.$(formSelector)
+    // Wait for and check if form exists
+    const formExists = await page.$('form')
+
     if (formExists) {
       report.formLoaded = true
       report.message = 'Form is accessible and loaded successfully!'
@@ -63,11 +79,14 @@ async function monitor() {
     }
   } catch (error) {
     report.message = `Monitoring failed: ${error.message}`
+    console.error('Full error:', error)
   } finally {
-    await browser.close()
+    if (browser) {
+      await browser.close()
+    }
   }
 
   return report
 }
 
-module.exports = monitor
+export default monitor

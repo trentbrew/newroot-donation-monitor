@@ -1,4 +1,4 @@
-const nodemailer = require('nodemailer')
+import nodemailer from 'nodemailer'
 
 async function sendAlert(message) {
   const transporter = nodemailer.createTransport({
@@ -19,6 +19,4 @@ async function sendAlert(message) {
   await transporter.sendMail(mailOptions)
 }
 
-module.exports = {
-  sendAlert,
-}
+export { sendAlert }

@@ -1,8 +1,7 @@
-require('dotenv').config()
-
-const express = require('express')
-const cors = require('cors')
-const monitor = require('./src/monitor')
+import 'dotenv/config'
+import express from 'express'
+import cors from 'cors'
+import monitor from './src/monitor.js'
 
 const app = express()
 
@@ -49,8 +48,9 @@ app.get('/', async (req, res) => {
       <body>
         <img width="100" src="https://trentbrew.pockethost.io/api/files/swvnum16u65or8w/1v2hwaoaoxv7fzu/newroot_5KrNw92lxT.png?token=" />
         <h1>NewRoot Status</h1>
-        <p>Donate directly: <a href="https://fundraise.givesmart.com/form/6dSeGQ?utm_source=embed&utm_medium=page&utm_campaign=donation&vid=1gtmvc">GiveSmart</a></p>
-        <p>Visit our main donation page: <a href="https://newroot.org/donate">NewRoot.org</a></p>
+        <p>Hosted status page: <a href="https://newroot.org/donate">NewRoot.org</a></p>
+        <p>Raw response: <a href="/donate">"/donate" Endpoint</a></p>
+        <p>Live donation page: <a href="https://fundraise.givesmart.com/form/6dSeGQ?utm_source=embed&utm_medium=page&utm_campaign=donation&vid=1gtmvc">GiveSmart</a></p>
       </body>
     </html>
   `)
