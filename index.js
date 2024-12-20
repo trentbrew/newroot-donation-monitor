@@ -15,9 +15,19 @@ app.use(express.json())
 app.use(cors())
 
 app.get('/', async (req, res) => {
-  res.json({
-    message: '👋🏾',
-  })
+  res.send(`
+    <html>
+      <head>
+        <title>NewRoot Status</title>
+      </head>
+      <body>
+        <h1>NewRoot Status</h1>
+
+        <p>Donate directly: <a href="https://fundraise.givesmart.com/form/6dSeGQ?utm_source=embed&utm_medium=page&utm_campaign=donation&vid=1gtmvc">GiveSmart</a></p>
+        <p>Visit our main donation page: <a href="https://newroot.org/donate">NewRoot.org</a></p>
+      </body>
+    </html>
+  `)
 })
 
 app.get('/monitor', async (req, res) => {

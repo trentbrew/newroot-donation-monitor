@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "installCommand": "pnpm install",
+  "installCommand": "pnpm install && pnpx puppeteer browsers install chrome",
   "builds": [
     {
       "src": "./index.js",
