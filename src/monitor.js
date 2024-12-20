@@ -1,5 +1,6 @@
 import chromium from 'chrome-aws-lambda'
-import puppeteer from 'puppeteer-core'
+import puppeteerCore from 'puppeteer-core'
+import puppeteer from 'puppeteer'
 
 async function monitor() {
   const url =
@@ -14,39 +15,24 @@ async function monitor() {
 
   let browser
   try {
-    // Determine Chrome path based on environment
-    const executablePath =
-      process.env.CHROME_EXECUTABLE_PATH ||
-      (process.env.VERCEL
-        ? await chromium.executablePath
-        : process.platform === 'win32'
-        ? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
-        : process.platform === 'linux'
-        ? '/usr/bin/google-chrome'
-        : '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome')
+    // Determine if we're in development or production
+    const isDev = process.env.NODE_ENV !== 'production'
+    console.log('Environment:', isDev ? 'development' : 'production')
 
-    console.log('Using Chrome at:', executablePath) // Debug log
-
-    // Launch browser with appropriate config
-    browser = await puppeteer.launch({
-      args: chromium.args || [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-accelerated-2d-canvas',
-        '--no-first-run',
-        '--no-zygote',
-        '--single-process',
-        '--disable-gpu',
-      ],
-      defaultViewport: chromium.defaultViewport || {
-        width: 1280,
-        height: 720,
-      },
-      executablePath,
-      headless: true,
-      ignoreHTTPSErrors: true,
-    })
+    if (isDev) {
+      // Local development - use full Puppeteer
+      browser = await puppeteer.launch({
+        headless: 'new',
+      })
+    } else {
+      // Vercel production - use puppeteer-core with chrome-aws-lambda
+      browser = await puppeteerCore.launch({
+        args: chromium.args,
+        executablePath: await chromium.executablePath,
+        headless: chromium.headless,
+        defaultViewport: chromium.defaultViewport,
+      })
+    }
 
     const page = await browser.newPage()
 
