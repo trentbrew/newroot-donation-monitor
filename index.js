@@ -19,10 +19,35 @@ app.get('/', async (req, res) => {
     <html>
       <head>
         <title>NewRoot Status</title>
+        <style>
+          body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: black;
+            color: white;
+            font-family: system-ui, sans-serif;
+          }
+          a {
+            color: #BE4F3D;
+          }
+          img {
+            margin-bottom: 1rem;
+          }
+          h1 {
+            margin: 0.5rem 0 1rem;
+          }
+          p {
+            margin: 0.5rem 0;
+          }
+        </style>
       </head>
       <body>
+        <img width="100" src="https://trentbrew.pockethost.io/api/files/swvnum16u65or8w/1v2hwaoaoxv7fzu/newroot_5KrNw92lxT.png?token=" />
         <h1>NewRoot Status</h1>
-
         <p>Donate directly: <a href="https://fundraise.givesmart.com/form/6dSeGQ?utm_source=embed&utm_medium=page&utm_campaign=donation&vid=1gtmvc">GiveSmart</a></p>
         <p>Visit our main donation page: <a href="https://newroot.org/donate">NewRoot.org</a></p>
       </body>
