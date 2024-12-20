@@ -55,7 +55,7 @@ app.get('/', async (req, res) => {
   `)
 })
 
-app.get('/monitor', async (req, res) => {
+app.get('/donate', async (req, res) => {
   try {
     const result = await monitor()
     res.json(result)
