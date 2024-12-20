@@ -58,7 +58,18 @@ app.get('/', async (req, res) => {
 
 app.get('/donate', async (req, res) => {
   try {
-    const result = await monitor()
+    const result = await monitor('donate')
+    res.json(result)
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    })
+  }
+})
+
+app.get('/contact', async (req, res) => {
+  try {
+    const result = await monitor('contact')
     res.json(result)
   } catch (error) {
     res.status(500).json({
