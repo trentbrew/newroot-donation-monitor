@@ -1,0 +1,10 @@
+1|{
+2|  "version": 2,
+3|  "installCommand": "npm install",
+4|  "crons": [
+5|    {
+6|      "path": "/api/cron",
+7|      "schedule": "0 0 * * *"
+8|    }
+9|  ]
+10|}
